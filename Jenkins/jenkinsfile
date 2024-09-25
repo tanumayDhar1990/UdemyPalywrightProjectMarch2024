@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+    tools { 
+        maven 'maven' 
+        jdk 'JDK-1.8'
+    }
+    parameters {
+        string(name: 'sitEnv', defaultValue: 'hybd1')
+        string(name: 'aatEnv', defaultValue: 'st5')
+        string(defaultValue: 'local', description: 'Maven profile name', name: 'mavenProfile')
+        string(defaultValue: 'chrome-desktop', description: 'Choose the browser configuration', name: 'seleniumBrowser')
+    }
+    stages {
+        stage ('clean') { 
+            steps { 
+                script { 
+                    cleanTargetDirectory()
+                }
+            } 
+        }
+        stage('book-tui-uk-desktop') {
+            steps{
+                script {
+                    cleanTargetDirectory()
+                    def String tags = '-Dextra.cucumber.options="--tags @book --tags @sit --tags @tuiuk --tags @ui --tags @desktop --tags @book_regression --tags ~@no_run --tags ~@wip --tags ~@obsolete --tags ~@manual"'
+                    def String baseUrl = "-Dwebsite.url=https://${params.aatEnv}.tuiprjuat.co.uk/destinations/"
+                    def String seleniumBrowser = params.seleniumBrowser
+                
+                    verifyUi(tags, baseUrl, seleniumBrowser)
+
+                }
+            }
+
+            post {
+                always {
+                    cucumber fileExcludePattern: '', fileIncludePattern: '**/*report.json', sortingMethod: 'ALPHABETICAL'
+                }
+            }
+        }
+    }
+}
+
+def cleanTargetDirectory() {
+    dir('target') {
+        deleteDir()
+    }
+}
+
+def verifyUi(String tags, String baseUrl, String browser) {
+    // Run the tests
+    def run = "cd cdaf && mvn verify -P${mavenProfile}" + " " + "-DHTTP_PROXY=proxy:8080 -Dselenium.browser=${browser}" + ' ' + tags + ' ' + baseUrl
+    bat run
+}

@@ -1,0 +1,19 @@
+{
+  "name": "javascript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/node": "^20.12.12",
+    "allure-playwright": "^3.0.0-beta.1"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.3.1",
+    "javascript": "file:"
+  }
+}
