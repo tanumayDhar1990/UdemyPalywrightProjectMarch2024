@@ -1,2 +1,2 @@
-# UdemyPalywrightProjectMarch2024
+# UdemyPlaywrightProjectMarch2024
 UdemyPalywrightProjectMarch2024
